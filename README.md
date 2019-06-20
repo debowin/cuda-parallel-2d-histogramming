@@ -7,8 +7,11 @@ and data-mining applications. They show the frequency of occurrence of data elem
 A simple example for the use of histograms is determining the distribution of a set of grades.
 
 Example:
+
 Grades: 0, 1, 1, 4, 0, 2, 5, 5, 5
+
 The above grades ranging from 0 to 5 result in the following 6-bin histogram:
+
 Histogram: 2, 2, 1, 0, 1, 3
 
 ## Details
