@@ -1,0 +1,25 @@
+1) Max Occupancy Strides:
+To achieve maximum parallel efficiency, I used min(maxConcurrentBlocks, input_size/block_size) blocks. 
+Each SM can have atmost y threads, each block can have z threads and there are x SMs, hence x*y/z = maxConcurrentBlocks.
+The min clause lets me launch lesser blocks if maxConcurrentBlocks are not required to span all input elements.(small inputs)
+
+Within each thread, I stride by total number of threads each step until I overshoot input size
+to improve memory coalescing.
+
+2) atomicClampedAdd:
+To add and clamp at 255 for each bin, I created a custom atomic operation using atomicCAS where I try to
+write a clamped sum of the value at address with the supplied value. This lets me clamp while adding and saves
+time trying to clamp using a post processing approach.
+
+3) atomicClampedAdd for uint8_t - Attempted and Left:
+Tried to implement a custom atomic clamped addition for uint8_t, this would minimise shared memory and global memory
+utilization by a factor of 4 but ran into a few problems such as a Warp Misaligned Address error. Abandoned in the interest of time.
+
+4) Marshalling:
+Flattened the input 2D array to easily copy over to device memory and access it neatly with strides.
+
+Stats:
+Input Size 10000x10000, Histogram Size 1024x1
+CPU - 10580 ms
+GPU - 102.564 ms
+Speedup - 103.16X
